@@ -6,4 +6,5 @@ abstract class PurchaseRepository {
   Future<Either<Exception, void>> add(Purchase purchase);
   Future<Either<Exception, void>> delete(String id);
   Future<Either<Exception, void>> clear();
+  Future<Either<Exception, void>> update(Purchase purchase);
 }

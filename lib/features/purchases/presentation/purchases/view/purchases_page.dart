@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopping/features/purchases/domain/entities/purchase.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_bloc.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_event.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_state.dart';
+import 'package:shopping/features/purchases/presentation/purchases/view/purchase_tile.dart';
 
 class PurchasesPage extends StatefulWidget {
   const PurchasesPage({super.key});
@@ -66,7 +66,6 @@ class _PurchasesPageState extends State<PurchasesPage> {
       ),
     );
     if (ok == true) {
-      // ignore: use_build_context_synchronously
       context.read<PurchaseBloc>().add(PurchasesCleared());
     }
   }
@@ -229,7 +228,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
                             onDismissed: (_) => context
                                 .read<PurchaseBloc>()
                                 .add(PurchaseDeleted(item.id)),
-                            child: _PurchaseTile(item: item),
+                            child: PurchaseTile(item: item),
                           );
                         },
                       );
@@ -313,28 +312,6 @@ class _PurchasesPageState extends State<PurchasesPage> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PurchaseTile extends StatelessWidget {
-  final Purchase item;
-  const _PurchaseTile({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    final subtitle =
-        'x${item.quantity} · S/. ${item.unitPrice.toStringAsFixed(2)}';
-    final right = 'S/. ${item.subtotal.toStringAsFixed(2)}';
-    return ListTile(
-      title: Text(item.name),
-      subtitle: Text(subtitle),
-      trailing: Text(
-        right,
-        style: TextStyle(
-          fontSize: 16,
         ),
       ),
     );

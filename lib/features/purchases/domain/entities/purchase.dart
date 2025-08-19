@@ -14,4 +14,20 @@ class Purchase {
   });
 
   double get subtotal => quantity * unitPrice;
+
+  Purchase copyWith({
+    String? id,
+    String? name,
+    int? quantity,
+    double? unitPrice,
+    DateTime? createdAt,
+  }) {
+    return Purchase(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      quantity: quantity ?? this.quantity,
+      unitPrice: unitPrice ?? this.unitPrice,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }

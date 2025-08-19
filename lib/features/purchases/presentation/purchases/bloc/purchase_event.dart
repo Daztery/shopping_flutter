@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:shopping/features/purchases/domain/entities/purchase.dart';
 
 class PurchaseEvent extends Equatable {
   const PurchaseEvent();
@@ -19,6 +20,14 @@ class PurchaseAdded extends PurchaseEvent {
 
   @override
   List<Object?> get props => [name, quantity, unitPrice];
+}
+
+class PurchaseUpdated extends PurchaseEvent {
+  final Purchase purchase;
+  const PurchaseUpdated(this.purchase);
+
+  @override
+  List<Object?> get props => [purchase];
 }
 
 class PurchaseDeleted extends PurchaseEvent {

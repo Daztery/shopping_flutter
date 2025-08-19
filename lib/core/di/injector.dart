@@ -12,6 +12,7 @@ import 'package:shopping/features/purchases/domain/usecases/purchases/add_purcha
 import 'package:shopping/features/purchases/domain/usecases/purchases/clear_purchases_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/purchases/delete_purchase_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/purchases/get_all_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/update_purchase_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/settings/get_spending_limit_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/settings/set_spending_limit_use_case.dart';
 
@@ -50,4 +51,5 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => ClearPurchasesUseCase(sl()));
   sl.registerLazySingleton(() => GetSpendingLimitUseCase(sl()));
   sl.registerLazySingleton(() => SetSpendingLimitUseCase(sl()));
+  sl.registerLazySingleton(() => UpdatePurchaseUseCase(sl()));
 }

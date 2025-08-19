@@ -42,4 +42,15 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
   Stream<List<Purchase>> getAll() =>
       local.getAll().map((list) => list.map((m) => m.toEntity()).toList()
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt)));
+
+  @override
+  Future<Either<Exception, void>> update(Purchase purchase) async {
+    try {
+      final model = PurchaseModel.fromEntity(purchase);
+      await local.update(model);
+      return const Right(null);
+    } catch (e) {
+      return Left(Exception(e.toString()));
+    }
+  }
 }

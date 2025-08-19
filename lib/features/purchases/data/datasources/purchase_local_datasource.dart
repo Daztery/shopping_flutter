@@ -4,6 +4,7 @@ import 'package:shopping/features/purchases/data/models/purchase_model.dart';
 abstract class PurchaseLocalDataSource {
   Stream<List<PurchaseModel>> getAll();
   Future<void> add(PurchaseModel purchase);
+  Future<void> update(PurchaseModel purchase);
   Future<void> delete(String id);
   Future<void> clear();
 }
@@ -22,6 +23,11 @@ class PurchaseLocalDatasourceImpl implements PurchaseLocalDataSource {
 
   @override
   Future<void> add(PurchaseModel purchase) async {
+    await box.put(purchase.id, purchase);
+  }
+
+  @override
+  Future<void> update(PurchaseModel purchase) async {
     await box.put(purchase.id, purchase);
   }
 

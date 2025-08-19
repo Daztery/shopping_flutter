@@ -6,6 +6,7 @@ import 'package:shopping/features/purchases/domain/usecases/purchases/add_purcha
 import 'package:shopping/features/purchases/domain/usecases/purchases/clear_purchases_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/purchases/delete_purchase_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/purchases/get_all_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/update_purchase_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/settings/get_spending_limit_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/settings/set_spending_limit_use_case.dart';
 import 'package:uuid/uuid.dart';
@@ -13,10 +14,14 @@ import 'purchase_event.dart';
 import 'purchase_state.dart';
 
 class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
+  // Purchases
   final GetAllPurchasesUseCase getAllPurchasesUseCase;
   final AddPurchaseUseCase addPurchaseUseCase;
+  final UpdatePurchaseUseCase updatePurchaseUseCase;
   final DeletePurchaseUseCase deletePurchaseUseCase;
   final ClearPurchasesUseCase clearPurchasesUseCase;
+
+  // Spending Limit
   final GetSpendingLimitUseCase getSpendingLimitUseCase;
   final SetSpendingLimitUseCase setSpendingLimitUseCase;
 
@@ -30,6 +35,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     required this.clearPurchasesUseCase,
     required this.getSpendingLimitUseCase,
     required this.setSpendingLimitUseCase,
+    required this.updatePurchaseUseCase,
   }) : super(const PurchaseState(loading: true)) {
     on<PurchaseStarted>(_onStarted);
     on<PurchaseAdded>(_onAdded);
@@ -39,6 +45,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     on<SetSpendingLimit>(_onSetLimit);
     on<SpendingLimitLoaded>(_onLimitLoaded);
     on<LimitCleared>(_onLimitCleared);
+    on<PurchaseUpdated>(_onUpdated);
   }
 
   void _onStarted(PurchaseStarted event, Emitter<PurchaseState> emit) {
@@ -116,6 +123,13 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
       spendingLimit: null,
       setSpendingLimit: true,
     ));
+  }
+
+  Future<void> _onUpdated(
+      PurchaseUpdated e, Emitter<PurchaseState> emit) async {
+    final res = await updatePurchaseUseCase(e.purchase);
+    res.fold((l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
+        (_) {});
   }
 
   @override

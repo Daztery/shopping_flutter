@@ -5,6 +5,7 @@ import 'package:shopping/features/purchases/domain/usecases/purchases/add_purcha
 import 'package:shopping/features/purchases/domain/usecases/purchases/clear_purchases_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/purchases/delete_purchase_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/purchases/get_all_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/update_purchase_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/settings/get_spending_limit_use_case.dart';
 import 'package:shopping/features/purchases/domain/usecases/settings/set_spending_limit_use_case.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_bloc.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         create: (_) => PurchaseBloc(
           getAllPurchasesUseCase: sl<GetAllPurchasesUseCase>(),
           addPurchaseUseCase: sl<AddPurchaseUseCase>(),
+          updatePurchaseUseCase: sl<UpdatePurchaseUseCase>(),
           deletePurchaseUseCase: sl<DeletePurchaseUseCase>(),
           clearPurchasesUseCase: sl<ClearPurchasesUseCase>(),
           getSpendingLimitUseCase: sl<GetSpendingLimitUseCase>(),
