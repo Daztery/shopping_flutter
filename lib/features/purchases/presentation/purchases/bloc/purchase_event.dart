@@ -30,7 +30,17 @@ class PurchaseDeleted extends PurchaseEvent {
   List<Object?> get props => [id];
 }
 
-class PurchaseCleared extends PurchaseEvent {}
+class SetSpendingLimit extends PurchaseEvent {
+  final double? limit;
+  const SetSpendingLimit(this.limit);
+
+  @override
+  List<Object?> get props => [limit];
+}
+
+class PurchasesCleared extends PurchaseEvent {
+  const PurchasesCleared();
+}
 
 class PurchasesStreamUpdated extends PurchaseEvent {
   final List<dynamic> items;
@@ -38,4 +48,16 @@ class PurchasesStreamUpdated extends PurchaseEvent {
 
   @override
   List<Object?> get props => [items];
+}
+
+class SpendingLimitLoaded extends PurchaseEvent {
+  final double? limit;
+  const SpendingLimitLoaded(this.limit);
+
+  @override
+  List<Object?> get props => [limit];
+}
+
+class LimitCleared extends PurchaseEvent {
+  const LimitCleared();
 }

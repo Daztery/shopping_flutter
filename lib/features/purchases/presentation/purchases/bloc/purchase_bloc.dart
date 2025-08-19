@@ -2,10 +2,12 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:shopping/features/purchases/domain/entities/purchase.dart';
-import 'package:shopping/features/purchases/domain/usecases/add_purchase_use_case.dart';
-import 'package:shopping/features/purchases/domain/usecases/clear_purchases_use_case.dart';
-import 'package:shopping/features/purchases/domain/usecases/delete_purchase_use_case.dart';
-import 'package:shopping/features/purchases/domain/usecases/get_all_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/add_purchase_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/clear_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/delete_purchase_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/get_all_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/settings/get_spending_limit_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/settings/set_spending_limit_use_case.dart';
 import 'package:uuid/uuid.dart';
 import 'purchase_event.dart';
 import 'purchase_state.dart';
@@ -15,6 +17,8 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
   final AddPurchaseUseCase addPurchaseUseCase;
   final DeletePurchaseUseCase deletePurchaseUseCase;
   final ClearPurchasesUseCase clearPurchasesUseCase;
+  final GetSpendingLimitUseCase getSpendingLimitUseCase;
+  final SetSpendingLimitUseCase setSpendingLimitUseCase;
 
   StreamSubscription<List<Purchase>>? _sub;
   final _uuid = const Uuid();
@@ -24,22 +28,35 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     required this.addPurchaseUseCase,
     required this.deletePurchaseUseCase,
     required this.clearPurchasesUseCase,
+    required this.getSpendingLimitUseCase,
+    required this.setSpendingLimitUseCase,
   }) : super(const PurchaseState(loading: true)) {
     on<PurchaseStarted>(_onStarted);
     on<PurchaseAdded>(_onAdded);
     on<PurchaseDeleted>(_onDeleted);
-    on<PurchaseCleared>(_onCleared);
+    on<PurchasesCleared>(_onCleared);
     on<PurchasesStreamUpdated>(_onStreamUpdated);
+    on<SetSpendingLimit>(_onSetLimit);
+    on<SpendingLimitLoaded>(_onLimitLoaded);
+    on<LimitCleared>(_onLimitCleared);
   }
 
   void _onStarted(PurchaseStarted event, Emitter<PurchaseState> emit) {
-    emit(state.copyWith(loading: true, error: null));
+    emit(state.copyWith(loading: true, error: null, keepLimit: true));
+    unawaited(() async {
+      final limit = await getSpendingLimitUseCase();
+      add(SpendingLimitLoaded(limit));
+    }());
     _sub?.cancel();
     _sub = getAllPurchasesUseCase().listen(
       (items) => add(PurchasesStreamUpdated(items)),
-      onError: (e, _) =>
-          emit(state.copyWith(loading: false, error: e.toString())),
+      onError: (e, _) => emit(
+          state.copyWith(loading: false, error: e.toString(), keepLimit: true)),
     );
+  }
+
+  void _onLimitLoaded(SpendingLimitLoaded e, Emitter<PurchaseState> emit) {
+    emit(state.copyWith(spendingLimit: e.limit, keepLimit: false));
   }
 
   Future<void> _onAdded(PurchaseAdded e, Emitter<PurchaseState> emit) async {
@@ -52,7 +69,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
     );
     final res = await addPurchaseUseCase(purchase);
     res.fold(
-      (l) => emit(state.copyWith(error: l.toString())),
+      (l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
       (_) {},
     );
   }
@@ -61,23 +78,44 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
       PurchaseDeleted e, Emitter<PurchaseState> emit) async {
     final res = await deletePurchaseUseCase(e.id);
     res.fold(
-      (l) => emit(state.copyWith(error: l.toString())),
+      (l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
       (_) {},
     );
   }
 
   Future<void> _onCleared(
-      PurchaseCleared e, Emitter<PurchaseState> emit) async {
+      PurchasesCleared e, Emitter<PurchaseState> emit) async {
     final res = await clearPurchasesUseCase();
     res.fold(
-      (l) => emit(state.copyWith(error: l.toString())),
+      (l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
       (_) {},
     );
   }
 
   void _onStreamUpdated(PurchasesStreamUpdated e, Emitter<PurchaseState> emit) {
     final items = e.items.cast<Purchase>();
-    emit(PurchaseState(items: items, loading: false));
+    emit(state.copyWith(
+      items: items,
+      loading: false,
+      error: null,
+      keepLimit: true,
+    ));
+  }
+
+  void _onSetLimit(SetSpendingLimit e, Emitter<PurchaseState> emit) async {
+    await setSpendingLimitUseCase(e.limit);
+    emit(state.copyWith(
+      spendingLimit: e.limit,
+      setSpendingLimit: true,
+    ));
+  }
+
+  void _onLimitCleared(LimitCleared e, Emitter<PurchaseState> emit) async {
+    await setSpendingLimitUseCase(null);
+    emit(state.copyWith(
+      spendingLimit: null,
+      setSpendingLimit: true,
+    ));
   }
 
   @override

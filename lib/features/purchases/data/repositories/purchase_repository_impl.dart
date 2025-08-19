@@ -40,5 +40,6 @@ class PurchaseRepositoryImpl implements PurchaseRepository {
 
   @override
   Stream<List<Purchase>> getAll() =>
-      local.getAll().map((list) => list.map((m) => m.toEntity()).toList());
+      local.getAll().map((list) => list.map((m) => m.toEntity()).toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt)));
 }

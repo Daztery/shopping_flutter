@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping/core/di/injector.dart';
-import 'package:shopping/features/purchases/domain/usecases/add_purchase_use_case.dart';
-import 'package:shopping/features/purchases/domain/usecases/clear_purchases_use_case.dart';
-import 'package:shopping/features/purchases/domain/usecases/delete_purchase_use_case.dart';
-import 'package:shopping/features/purchases/domain/usecases/get_all_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/add_purchase_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/clear_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/delete_purchase_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/purchases/get_all_purchases_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/settings/get_spending_limit_use_case.dart';
+import 'package:shopping/features/purchases/domain/usecases/settings/set_spending_limit_use_case.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_bloc.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_event.dart';
 import 'package:shopping/features/purchases/presentation/purchases/view/purchases_page.dart';
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
           addPurchaseUseCase: sl<AddPurchaseUseCase>(),
           deletePurchaseUseCase: sl<DeletePurchaseUseCase>(),
           clearPurchasesUseCase: sl<ClearPurchasesUseCase>(),
+          getSpendingLimitUseCase: sl<GetSpendingLimitUseCase>(),
+          setSpendingLimitUseCase: sl<SetSpendingLimitUseCase>(),
         )..add(const PurchaseStarted()),
         child: const PurchasesPage(),
       ),
