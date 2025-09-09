@@ -1,6 +1,6 @@
 # 🛒 Shopping App
 
-A simple **Shopping Manager App** built with **Flutter**, using **Clean Architecture + MVVM + BLoC**.  
+A simple **Shopping Manager App** built with **Flutter**, using **Clean Architecture + BLoC**.  
 It allows users to add, delete, clear, and edit purchases, while tracking the total cost and an optional spending limit.
 
 ---
