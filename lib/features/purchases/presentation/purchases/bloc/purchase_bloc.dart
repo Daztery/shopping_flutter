@@ -73,27 +73,30 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
       unitPrice: e.unitPrice,
       createdAt: DateTime.now(),
     );
-    final res = await addPurchaseUseCase(purchase);
-    res.fold(
-      (l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
+    final result = await addPurchaseUseCase(purchase);
+    result.fold(
+      (response) =>
+          emit(state.copyWith(error: response.toString(), keepLimit: true)),
       (_) {},
     );
   }
 
   Future<void> _onDeleted(
       PurchaseDeleted e, Emitter<PurchaseState> emit) async {
-    final res = await deletePurchaseUseCase(e.id);
-    res.fold(
-      (l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
+    final result = await deletePurchaseUseCase(e.id);
+    result.fold(
+      (response) =>
+          emit(state.copyWith(error: response.toString(), keepLimit: true)),
       (_) {},
     );
   }
 
   Future<void> _onCleared(
       PurchasesCleared e, Emitter<PurchaseState> emit) async {
-    final res = await clearPurchasesUseCase();
-    res.fold(
-      (l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
+    final result = await clearPurchasesUseCase();
+    result.fold(
+      (response) =>
+          emit(state.copyWith(error: response.toString(), keepLimit: true)),
       (_) {},
     );
   }
@@ -126,8 +129,10 @@ class PurchaseBloc extends Bloc<PurchaseEvent, PurchaseState> {
 
   Future<void> _onUpdated(
       PurchaseUpdated e, Emitter<PurchaseState> emit) async {
-    final res = await updatePurchaseUseCase(e.purchase);
-    res.fold((l) => emit(state.copyWith(error: l.toString(), keepLimit: true)),
+    final result = await updatePurchaseUseCase(e.purchase);
+    result.fold(
+        (response) =>
+            emit(state.copyWith(error: response.toString(), keepLimit: true)),
         (_) {});
   }
 

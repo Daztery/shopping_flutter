@@ -206,7 +206,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
                       }
                       return ListView.separated(
                         itemCount: state.items.length,
-                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        separatorBuilder: (_, __) => const Divider(height: 2),
                         itemBuilder: (_, i) {
                           final item = state.items[i];
                           return Dismissible(
@@ -244,13 +244,34 @@ class _PurchasesPageState extends State<PurchasesPage> {
                         controller: _nameCtrl,
                         focusNode: _nameFocus,
                         decoration: const InputDecoration(
-                          labelText: 'Nombre',
+                          labelText: 'Nombre del producto',
                         ),
                         textInputAction: TextInputAction.next,
                         validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Requerido'
+                            ? 'No puede estar vacío'
                             : null,
                         onFieldSubmitted: (_) => _qtyFocus.requestFocus(),
+                      ),
+                      TextFormField(
+                        controller: _priceCtrl,
+                        focusNode: _priceFocus,
+                        decoration: const InputDecoration(
+                            labelText: 'Precio unitario (S/)'),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                        ],
+                        textInputAction: TextInputAction.done,
+                        validator: (v) {
+                          final n =
+                              double.tryParse((v ?? '').replaceAll(',', '.'));
+                          if (n == null || n <= 0) {
+                            return 'Tiene que ser mayor a 0';
+                          }
+                          return null;
+                        },
+                        onFieldSubmitted: (_) => _submit(),
                       ),
                       const SizedBox(width: 8),
                       TextFormField(
@@ -265,29 +286,12 @@ class _PurchasesPageState extends State<PurchasesPage> {
                         textInputAction: TextInputAction.next,
                         validator: (v) {
                           final n = int.tryParse(v ?? '');
-                          if (n == null || n <= 0) return '>= 1';
+                          if (n == null || n <= 0) {
+                            return 'Tiene que ser mayor a 0';
+                          }
                           return null;
                         },
                         onFieldSubmitted: (_) => _priceFocus.requestFocus(),
-                      ),
-                      TextFormField(
-                        controller: _priceCtrl,
-                        focusNode: _priceFocus,
-                        decoration:
-                            const InputDecoration(labelText: 'Precio unitario'),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-                        ],
-                        textInputAction: TextInputAction.done,
-                        validator: (v) {
-                          final n =
-                              double.tryParse((v ?? '').replaceAll(',', '.'));
-                          if (n == null || n <= 0) return '> 0';
-                          return null;
-                        },
-                        onFieldSubmitted: (_) => _submit(),
                       ),
                       const SizedBox(
                         height: 10,

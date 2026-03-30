@@ -62,9 +62,24 @@ class PurchaseTile extends StatelessWidget {
               const SizedBox(height: 12),
               TextFormField(
                 controller: nameCtrl,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Requerido' : null,
+                decoration:
+                    const InputDecoration(labelText: 'Nombre del producto'),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'No puede estar vacío'
+                    : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: priceCtrl,
+                decoration:
+                    const InputDecoration(labelText: 'Precio unitario (S/)'),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                validator: (v) {
+                  final n = double.tryParse((v ?? '').replaceAll(',', '.'));
+                  if (n == null || n <= 0) return 'Tiene que ser mayor a 0';
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -73,19 +88,7 @@ class PurchaseTile extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 validator: (v) {
                   final n = int.tryParse(v ?? '');
-                  if (n == null || n <= 0) return '>= 1';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: priceCtrl,
-                decoration: const InputDecoration(labelText: 'Precio unitario'),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                validator: (v) {
-                  final n = double.tryParse((v ?? '').replaceAll(',', '.'));
-                  if (n == null || n <= 0) return '> 0';
+                  if (n == null || n <= 0) return 'Tiene que ser mayor a 0';
                   return null;
                 },
               ),
