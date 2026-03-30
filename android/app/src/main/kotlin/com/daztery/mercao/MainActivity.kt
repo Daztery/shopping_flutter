@@ -1,4 +1,4 @@
-package com.example.shopping
+package com.daztery.mercao
 
 import io.flutter.embedding.android.FlutterActivity
 
