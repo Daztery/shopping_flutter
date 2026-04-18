@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_bloc.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_event.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_state.dart';
-import 'package:shopping/features/purchases/presentation/purchases/view/purchase_tile.dart';
+import 'package:shopping/features/purchases/presentation/purchases/screen/purchase_tile.dart';
 
 class PurchasesPage extends StatefulWidget {
   const PurchasesPage({super.key});

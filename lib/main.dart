@@ -10,7 +10,7 @@ import 'package:shopping/features/purchases/domain/usecases/settings/get_spendin
 import 'package:shopping/features/purchases/domain/usecases/settings/set_spending_limit_use_case.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_bloc.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_event.dart';
-import 'package:shopping/features/purchases/presentation/purchases/view/purchases_page.dart';
+import 'package:shopping/features/purchases/presentation/purchases/screen/purchases_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
