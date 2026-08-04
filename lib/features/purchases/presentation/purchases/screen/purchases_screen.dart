@@ -6,14 +6,14 @@ import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_state.dart';
 import 'package:shopping/features/purchases/presentation/purchases/screen/purchase_tile.dart';
 
-class PurchasesPage extends StatefulWidget {
-  const PurchasesPage({super.key});
+class PurchasesScreen extends StatefulWidget {
+  const PurchasesScreen({super.key});
 
   @override
-  State<PurchasesPage> createState() => _PurchasesPageState();
+  State<PurchasesScreen> createState() => _PurchasesScreenState();
 }
 
-class _PurchasesPageState extends State<PurchasesPage> {
+class _PurchasesScreenState extends State<PurchasesScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _qtyCtrl = TextEditingController();
@@ -153,31 +153,83 @@ class _PurchasesPageState extends State<PurchasesPage> {
                     if (state.spendingLimit == null) {
                       return const SizedBox.shrink();
                     }
-                    final text = state.isOverLimit
-                        ? '¡Te pasaste! (S/. ${state.spendingLimit!.toStringAsFixed(2)}) -> Exceso: S/. ${(state.total - state.spendingLimit!).toStringAsFixed(2)}'
-                        : 'Monto de capital: S/. ${state.spendingLimit!.toStringAsFixed(2)}';
+                    final limit = state.spendingLimit!;
+                    final progress =
+                        limit > 0 ? (state.total / limit).clamp(0.0, 1.0) : 0.0;
+                    final colorScheme = Theme.of(context).colorScheme;
+                    final accentColor = state.isOverLimit
+                        ? colorScheme.error
+                        : colorScheme.primary;
+                    final balanceText = state.isOverLimit
+                        ? 'Exceso: S/. ${(state.total - limit).toStringAsFixed(2)}'
+                        : 'Disponible: S/. ${(limit - state.total).toStringAsFixed(2)}';
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: state.isOverLimit
-                            ? Theme.of(context).colorScheme.errorContainer
-                            : Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        text,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: state.isOverLimit
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onErrorContainer
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSecondaryContainer,
-                              fontWeight: FontWeight.w600,
+                    return Card(
+                      key: const Key('spending-limit-card'),
+                      margin: const EdgeInsets.only(bottom: 12),
+                      color: state.isOverLimit
+                          ? colorScheme.errorContainer
+                          : colorScheme.surfaceContainerHighest,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.account_balance_wallet_outlined,
+                                  color: accentColor,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Límite de gasto',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                              ],
                             ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Gastado: S/. ${state.total.toStringAsFixed(2)}',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                Text(
+                                  'Límite: S/. ${limit.toStringAsFixed(2)}',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: LinearProgressIndicator(
+                                key: const Key('spending-limit-progress'),
+                                value: progress,
+                                minHeight: 10,
+                                color: accentColor,
+                                backgroundColor:
+                                    accentColor.withValues(alpha: 0.18),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              balanceText,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: accentColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

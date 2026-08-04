@@ -10,7 +10,7 @@ import 'package:shopping/features/purchases/domain/usecases/settings/get_spendin
 import 'package:shopping/features/purchases/domain/usecases/settings/set_spending_limit_use_case.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_bloc.dart';
 import 'package:shopping/features/purchases/presentation/purchases/bloc/purchase_event.dart';
-import 'package:shopping/features/purchases/presentation/purchases/screen/purchases_page.dart';
+import 'package:shopping/features/purchases/presentation/purchases/screen/purchases_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
           getSpendingLimitUseCase: sl<GetSpendingLimitUseCase>(),
           setSpendingLimitUseCase: sl<SetSpendingLimitUseCase>(),
         )..add(const PurchaseStarted()),
-        child: const PurchasesPage(),
+        child: const PurchasesScreen(),
       ),
     );
   }
